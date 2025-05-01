@@ -1,10 +1,9 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { 
   Calendar, 
   Clock, 
-  MapPin, 
-  Upload, 
+  MapPin,
   AlertCircle,
   Tag,
   Info,
@@ -14,8 +13,7 @@ import {
   Phone
 } from 'lucide-react';
 import { collection, addDoc, serverTimestamp, doc, getDoc } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { db, storage } from '../../../firebase';
+import { db } from '../../firebase';
 import { format } from 'date-fns';
 import { useAuth } from '../../context/AuthContext';
 import { useNotification } from '../../context/NotificationContext';
@@ -59,7 +57,6 @@ const timeSlots: TimeSlot[] = [
 export function ServiceBooking() {
   const { serviceId } = useParams();
   const navigate = useNavigate();
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const { user } = useAuth();
   const { showNotification } = useNotification();
 
@@ -78,7 +75,6 @@ export function ServiceBooking() {
     promoCode: '',
     saveAddress: false,
     specialInstructions: '',
-    images: [] as File[],
     preferredProvider: '',
     additionalServices: [] as string[]
   });
@@ -101,7 +97,7 @@ export function ServiceBooking() {
               email: user.email || '',
               phone: profile.phone,
               address: profile.address,
-              serviceType: serviceId || prev.serviceType // Set the service type based on URL parameter
+              serviceType: serviceId || prev.serviceType
             }));
           }
         }
@@ -132,15 +128,6 @@ export function ServiceBooking() {
     }
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      setBookingData(prev => ({
-        ...prev,
-        images: [...prev.images, ...Array.from(e.target.files || [])]
-      }));
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) {
@@ -151,17 +138,8 @@ export function ServiceBooking() {
     setLoading(true);
 
     try {
-      const imageUrls = await Promise.all(
-        bookingData.images.map(async (image) => {
-          const storageRef = ref(storage, `service-images/${Date.now()}-${image.name}`);
-          const snapshot = await uploadBytes(storageRef, image);
-          return getDownloadURL(snapshot.ref);
-        })
-      );
-
       const bookingRef = await addDoc(collection(db, 'bookings'), {
         ...bookingData,
-        imageUrls,
         userId: user.uid,
         userProfile: {
           fullName: bookingData.fullName,
@@ -383,68 +361,6 @@ export function ServiceBooking() {
                   </span>
                 </label>
               </div>
-            </div>
-
-            {/* Image Upload */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                <div className="flex items-center gap-2">
-                  <Upload className="w-5 h-5" />
-                  <span>Upload Images</span>
-                </div>
-              </label>
-              <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 dark:border-gray-600 border-dashed rounded-md">
-                <div className="space-y-1 text-center">
-                  <Upload className="mx-auto h-12 w-12 text-gray-400" />
-                  <div className="flex text-sm text-gray-600 dark:text-gray-400">
-                    <label
-                      htmlFor="file-upload"
-                      className="relative cursor-pointer bg-white dark:bg-gray-800 rounded-md font-medium text-orange-500 hover:text-orange-600"
-                    >
-                      <span>Upload files</span>
-                      <input
-                        id="file-upload"
-                        name="file-upload"
-                        type="file"
-                        className="sr-only"
-                        multiple
-                        accept="image/*"
-                        ref={fileInputRef}
-                        onChange={handleImageUpload}
-                      />
-                    </label>
-                    <p className="pl-1">or drag and drop</p>
-                  </div>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                    PNG, JPG, GIF up to 10MB
-                  </p>
-                </div>
-              </div>
-              {bookingData.images.length > 0 && (
-                <div className="mt-2 flex gap-2 flex-wrap">
-                  {bookingData.images.map((image, index) => (
-                    <div key={index} className="relative">
-                      <img
-                        src={URL.createObjectURL(image)}
-                        alt={`Preview ${index + 1}`}
-                        className="w-20 h-20 object-cover rounded"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setBookingData(prev => ({
-                            ...prev,
-                            images: prev.images.filter((_, i) => i !== index)
-                          }));
-                        }}
-                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1"
-                      >
-                        ×
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
             </div>
 
             {/* Urgent Service Toggle */}
