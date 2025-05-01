@@ -1,4 +1,4 @@
-# 🛠️ Home Repair Services Website
+# 🛠️ Home Repair - Services Providing Website
 
 A modern web platform for booking and managing home repair and maintenance services. This project connects users with trusted service providers for tasks such as plumbing, electrical work, carpentry, and more.
 
