@@ -13,7 +13,7 @@ import {
   Phone
 } from 'lucide-react';
 import { collection, addDoc, serverTimestamp, doc, getDoc } from 'firebase/firestore';
-import { db } from '../../firebase';
+import { db } from '../../../firebase';
 import { format } from 'date-fns';
 import { useAuth } from '../../context/AuthContext';
 import { useNotification } from '../../context/NotificationContext';
