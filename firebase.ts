@@ -4,12 +4,12 @@ import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDV8rJR3q28K7ZkHcbcfjXLZafFqc8vu-I",
-  authDomain: "home-service-b16c5.firebaseapp.com",
-  projectId: "home-service-b16c5",
-  storageBucket: "home-service-b16c5.firebasestorage.app",
-  messagingSenderId: "684934498368",
-  appId: "1:684934498368:web:09a364961718d80282f7a5"
+  apiKey: "AIzaSyD9J-BFJFLDIuuT4HzQl5FUH6BRu2ic_RA",
+  authDomain: "homefixpro-cebe3.firebaseapp.com",
+  projectId: "homefixpro-cebe3",
+  storageBucket: "homefixpro-cebe3.firebasestorage.app",
+  messagingSenderId: "333812773868",
+  appId: "1:333812773868:web:56208bd12c01df3db346c9"
 };
 
 const app = initializeApp(firebaseConfig);
